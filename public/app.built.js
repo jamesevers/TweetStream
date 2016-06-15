@@ -9,6 +9,7 @@ var App = (function() {
 	return {
 		init: function() {
 			console.log('we init');
+			//socket.emit('tweet button clicked');
 		}
 	}
 

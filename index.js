@@ -49,10 +49,7 @@ var TwitterFantasyBot = (function() {
 	};
 
 	var constructTweet = function() {
-		tweetSentence = '';
-		tweetSentence += sentenceConstruction.first[Math.floor(Math.random() * sentenceConstruction.first.length)];
-		tweetSentence += sentenceConstruction.second[Math.floor(Math.random() * sentenceConstruction.second.length)];
-		tweetSentence += sentenceConstruction.third[Math.floor(Math.random() * sentenceConstruction.third.length)];
+		tweetSentence = 'Hello World!';
 	};
 
 	var postTweet = function() {
