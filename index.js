@@ -48,8 +48,8 @@ var TwitterFantasyBot = (function() {
 		});
 	};
 
-	var constructTweet = function() {
-		tweetSentence = 'Hello World!';
+	var constructTweet = function(text) {
+		tweetSentence = text;
 	};
 
 	var postTweet = function() {
@@ -61,9 +61,8 @@ var TwitterFantasyBot = (function() {
 
 	var onIO = function() {
 		io.on('connection', function(socket) {
-			console.log('hello world');
-			socket.on('tweet button clicked', function() {
-				constructTweet();
+			socket.on('tweet button clicked', function(text) {
+				constructTweet(text);
 				try {
 					postTweet();
 				}
@@ -73,7 +72,7 @@ var TwitterFantasyBot = (function() {
 				console.log(tweetSentence);
 				io.emit('new tweet', {
 					tweet: tweetSentence
-				})
+				});
 			});
 		});
 	};

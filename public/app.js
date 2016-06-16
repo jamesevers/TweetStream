@@ -17,7 +17,10 @@ var App = (function() {
 		memesTextArray,
 		memesTextArrayLen,
 		memeTextElem,
-		memeImageElem;
+		memeImageElem,
+		MEME_IMAGE_URL,
+		MEME_TEXT,
+		MEME_TEXT_COMPOSED;
 
 	var initialize = function() {
 		memeTextElem = document.getElementById('meme-text');
@@ -35,25 +38,32 @@ var App = (function() {
 				console.log(memesTextArray);
 				setMemeText();
 				setMemeImage();
+				composeMemeText();
 			}
 		});
 	};
 
 	var setMemeText = function() {
 		var randomInt = Math.floor(Math.random() * memesTextArrayLen);
-		memeTextElem.innerText = memesTextArray[randomInt];
+		MEME_TEXT = memesTextArray[randomInt];
+		memeTextElem.innerText = MEME_TEXT;
 	};
 
 	var setMemeImage = function() {
 		var randomInt = Math.floor(Math.random() * memesArrayLen);
-		memeImageElem.setAttribute('src', memesArray[randomInt]['url']);
+		MEME_IMAGE_URL = memesArray[randomInt]['url'];
+		memeImageElem.setAttribute('src', MEME_IMAGE_URL);
+	};
+
+	var composeMemeText = function() {
+		MEME_TEXT_COMPOSED = MEME_TEXT + ' ' + MEME_IMAGE_URL;
+		socket.emit('tweet button clicked', MEME_TEXT_COMPOSED);
 	};
 
 	return {
 		init: function() {
 			console.log('we init');
 			initialize();
-			socket.emit('tweet button clicked');
 		}
 	}
 
