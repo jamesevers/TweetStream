@@ -12,7 +12,8 @@ socket.heartbeatTimeout = 20000;
 var App = (function() {
 
 	var ajax,
-		memesArrayLen = 97,
+		imgPath = 'public/stock_screaming/',
+		memesArrayLen = 42,
 		memesTextArray,
 		memesTextArrayLen,
 		memeTextElem,
@@ -39,7 +40,7 @@ var App = (function() {
 
 	var setMemeImage = function() {
 		var randomInt = Math.floor(Math.random() * memesArrayLen);
-		MEME_IMAGE_PATH = 'public/img/' + randomInt + '.jpg';
+		MEME_IMAGE_PATH = imgPath + randomInt + '.jpg';
 		memeImageElem.setAttribute('src', MEME_IMAGE_PATH);
 	};
 
