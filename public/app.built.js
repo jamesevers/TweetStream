@@ -1568,31 +1568,97 @@ module.exports = function(arr, fn, initial){
 },{}],7:[function(require,module,exports){
 'use strict';
 
+// Requires and needs
 var socket = io();
 var Ajax = require('superagent');
+var Soylent = require('./../soylent-faq');
+var TwitterCredentials = require('./../twitter-credentials.json');
+
+// The mo' f'in hearbeat
 socket.heartbeatTimeout = 20000;
 
 var App = (function() {
 
-	var ajax;
+	var ajax,
+		memesArray,
+		memesArrayLen,
+		memesTextArray,
+		memesTextArrayLen,
+		memeTextElem,
+		memeImageElem;
 
 	var initialize = function() {
+		memeTextElem = document.getElementById('meme-text');
+		memeImageElem = document.getElementById('meme-image');
+		// Make the Ajax call to get the meme images
 		Ajax
 		.get('http://api.imgflip.com/get_memes')
 		.end(function(err, res) {
-			console.log('what the fuck', err, res);
+			var JSONresponse = JSON.parse(res.text);
+			if (JSONresponse) {
+				memesArray = JSONresponse.data.memes;
+				memesArrayLen = memesArray.length;
+				memesTextArray = Soylent.faq;
+				memesTextArrayLen = memesTextArray.length;
+				console.log(memesTextArray);
+				setMemeText();
+				setMemeImage();
+			}
 		});
+	};
+
+	var setMemeText = function() {
+		var randomInt = Math.floor(Math.random() * memesTextArrayLen);
+		memeTextElem.innerText = memesTextArray[randomInt];
+	};
+
+	var setMemeImage = function() {
+		var randomInt = Math.floor(Math.random() * memesArrayLen);
+		memeImageElem.setAttribute('src', memesArray[randomInt]['url']);
 	};
 
 	return {
 		init: function() {
 			console.log('we init');
 			initialize();
-			//socket.emit('tweet button clicked');
+			socket.emit('tweet button clicked');
 		}
 	}
 
 }());
 
 App.init();
-},{"superagent":1}]},{},[7]);
+},{"./../soylent-faq":8,"./../twitter-credentials.json":9,"superagent":1}],8:[function(require,module,exports){
+module.exports = {
+	faq: [
+		'Soylent is a simple, efficient and affordable drink that possesses what a body needs to be healthy.',
+		'Soylent is a new option for maintaining a balanced state of ideal nutrition, just like traditional food.',
+		'Soylent’s nutritional makeup includes protein, carbohydrates, fats, fiber, and vitamins and minerals such as potassium, iron and calcium.',
+		'It includes all of the elements of a healthy diet, without excess amounts of sugars, saturated fats, or cholesterol.',
+		'Soylent is a convenient powder that is mixed with water.',
+		'Healthy food can be expensive and takes time to prepare. At around $3 meal, Soylent is affordable.',
+		'Soylent is designed as a simple staple food, and people incorporate it into their lives to varying degrees.',
+		'Some people use it almost exclusively, while others use it 2-3 times per week.',
+		'As a nutritionally complete food source, Soylent should be considered a food product just like any other.',
+		'You can include Soylent in your diet for as long as you’d like, in any amount that suits your needs.',
+		'There is no right or wrong amount of Soylent to eat - the whole idea is to find a balance that works for you.',
+		'The average adult requires 2,000 calories per day, which is equivalent to one pouch of Soylent Powder, or five 400-calorie bottles of Soylent Drink.',
+		'However, caloric requirements can vary substantially from person to person, and you may find the 2,000 calorie recommendation to be inappropriate for your lifestyle.',
+		'We recommend taking a look at our nutritional composition and deciding what mixture of Soylent and regular food you would like to eat in your daily life.',
+		'Please feel free to consult our nutrition facts for Soylent Powder, and Soylent Drink for more information.',
+		'When preparing Soylent Powder, you may adjust the size of each serving to your liking.',
+		'You are free to consume your Soylent in whatever amount works for you.',
+		'Most people consume fewer than 2000 calories of Soylent daily.  This means that a pouch of Soylent Powder often lasts for two or more days.',
+		'At this time Soylent has not been evaluated specifically for weight loss purposes.',
+		'Soylent contains plenty of insoluble fiber so bowel movements are more or less unchanged.',
+		'Soylent products are currently sold exclusively through Soylent.com and Amazon.com.'
+	]
+}
+},{}],9:[function(require,module,exports){
+module.exports={
+	"consumer_key": "vEkziUe02sgpqWjyiHFHqOpQy",
+	"consumer_secret": "sTAJbGWKDXueoC5TNu0H8Q63JxF8cvgpKjIUJDWQYKytxvJZzo",
+	"access_token": "743262589136805888-y0Ar7ByFu02CGRhXC4fSIQERxjKiPig",
+	"access_token_secret": "o4pyv9cU1oJCvsXHP4yPowu9jCtOXDgsDrFGDJkSgc8WL"
+}
+},{}]},{},[7]);
