@@ -63,16 +63,16 @@ var TwitterFantasyBot = (function() {
 		io.on('connection', function(socket) {
 			socket.on('tweet button clicked', function(text) {
 				constructTweet(text);
-				try {
-					postTweet();
-				}
-				catch (e) {
-					console.log(e);
-				}
-				console.log(tweetSentence);
-				io.emit('new tweet', {
-					tweet: tweetSentence
-				});
+				// try {
+				// 	postTweet();
+				// }
+				// catch (e) {
+				// 	console.log(e);
+				// }
+				// console.log(tweetSentence);
+				// io.emit('new tweet', {
+				// 	tweet: tweetSentence
+				// });
 			});
 		});
 	};
