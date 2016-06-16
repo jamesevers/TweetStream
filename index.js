@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var Twit = require('twit');
+var fs = require('node-fs');
 
 var TwitterFantasyBot = (function() {
 
@@ -48,31 +49,48 @@ var TwitterFantasyBot = (function() {
 		});
 	};
 
-	var constructTweet = function(text) {
-		tweetSentence = text;
-	};
+	var postTweet = function(data) {
+		var STORED_DATA = data;
+		var b64content = fs.readFileSync(STORED_DATA.image_path, { encoding: 'base64' });
+		Tweet.post('media/upload', { media_data: b64content }, function (err, data, response) {
+			if (!err) {
+				// now we can assign alt text to the media, for use by screen readers and
+				// other text-based presentations and interpreters
+				var mediaIdStr = data.media_id_string
+				var altText = "Alt Text Hello World"
+				var meta_params = { status: STORED_DATA.meme_text, media_id: mediaIdStr, alt_text: { text: altText } }
 
-	var postTweet = function() {
-		Tweet.post('statuses/update', { status: tweetSentence}, function(err, reply) {
-			console.log("error: " + err);
-			console.log("reply: " + reply);
-		});
+				Tweet.post('media/metadata/create', meta_params, function (err, data, response) {
+					if (!err) {
+						// now we can reference the media and post a tweet (media will attach to the tweet)
+						var params = { status: STORED_DATA.meme_text, media_ids: [mediaIdStr] }
+						Tweet.post('statuses/update', params, function (err, data, response) {
+							console.log(data)
+						});
+					}
+					else {
+						console.log('fail at second media/metadata/create', err);
+					}
+				});
+			}
+			else {
+				console.log('fail at first media/upload', err);
+			}
+		})
 	};
 
 	var onIO = function() {
 		io.on('connection', function(socket) {
-			socket.on('tweet button clicked', function(text) {
-				constructTweet(text);
-				// try {
-				// 	postTweet();
-				// }
-				// catch (e) {
-				// 	console.log(e);
-				// }
-				// console.log(tweetSentence);
-				// io.emit('new tweet', {
-				// 	tweet: tweetSentence
-				// });
+			socket.on('tweet button clicked', function(data) {
+				try {
+					postTweet(data);
+				}
+				catch (e) {
+					console.log(e);
+				}
+				io.emit('new tweet', {
+					tweet: tweetSentence
+				});
 			});
 		});
 	};

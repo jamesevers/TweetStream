@@ -2,9 +2,9 @@
 
 // Requires and needs
 var socket = io();
-var Ajax = require('superagent');
 var Soylent = require('./../soylent-faq');
 var TwitterCredentials = require('./../twitter-credentials.json');
+var fs = require('node-fs');
 
 // The mo' f'in hearbeat
 socket.heartbeatTimeout = 20000;
@@ -12,35 +12,23 @@ socket.heartbeatTimeout = 20000;
 var App = (function() {
 
 	var ajax,
-		memesArray,
-		memesArrayLen,
+		memesArrayLen = 97,
 		memesTextArray,
 		memesTextArrayLen,
 		memeTextElem,
 		memeImageElem,
-		MEME_IMAGE_URL,
+		MEME_IMAGE_PATH,
 		MEME_TEXT,
 		MEME_TEXT_COMPOSED;
 
 	var initialize = function() {
 		memeTextElem = document.getElementById('meme-text');
 		memeImageElem = document.getElementById('meme-image');
-		// Make the Ajax call to get the meme images
-		Ajax
-		.get('http://api.imgflip.com/get_memes')
-		.end(function(err, res) {
-			var JSONresponse = JSON.parse(res.text);
-			if (JSONresponse) {
-				memesArray = JSONresponse.data.memes;
-				memesArrayLen = memesArray.length;
-				memesTextArray = Soylent.faq;
-				memesTextArrayLen = memesTextArray.length;
-				console.log(memesTextArray);
-				setMemeText();
-				setMemeImage();
-				composeMemeText();
-			}
-		});
+		memesTextArray = Soylent.faq;
+		memesTextArrayLen = memesTextArray.length;
+		setMemeText();
+		setMemeImage();
+		composeMemeText();
 	};
 
 	var setMemeText = function() {
@@ -51,13 +39,16 @@ var App = (function() {
 
 	var setMemeImage = function() {
 		var randomInt = Math.floor(Math.random() * memesArrayLen);
-		MEME_IMAGE_URL = memesArray[randomInt]['url'];
-		memeImageElem.setAttribute('src', MEME_IMAGE_URL);
+		MEME_IMAGE_PATH = 'public/img/' + randomInt + '.jpg';
+		memeImageElem.setAttribute('src', MEME_IMAGE_PATH);
 	};
 
 	var composeMemeText = function() {
-		MEME_TEXT_COMPOSED = MEME_TEXT + ' ' + MEME_IMAGE_URL;
-		socket.emit('tweet button clicked', MEME_TEXT_COMPOSED);
+		console.log('we composing');
+		socket.emit('tweet button clicked', {
+			image_path: MEME_IMAGE_PATH,
+			meme_text: MEME_TEXT
+		});
 	};
 
 	return {
