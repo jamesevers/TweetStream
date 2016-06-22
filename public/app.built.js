@@ -484,18 +484,41 @@ var App = (function() {
 		memesTextArrayLen,
 		memeTextElem,
 		memeImageElem,
+		generateButton,
+		tweetButton,
 		MEME_IMAGE_PATH,
 		MEME_TEXT,
 		MEME_TEXT_COMPOSED;
 
 	var initialize = function() {
+		generateButton = document.getElementById('generate-button');
+		tweetButton = document.getElementById('tweet-button');
 		memeTextElem = document.getElementById('meme-text');
 		memeImageElem = document.getElementById('meme-image');
 		memesTextArray = Soylent.faq;
 		memesTextArrayLen = memesTextArray.length;
+		composeTweet();
+		addListeners();
+	};
+
+	var addListeners = function() {
+		generateButton.addEventListener('click', onGenerateButtonClicked);
+		tweetButton.addEventListener('click', onTweetButtonClicked);
+	};
+
+	var onGenerateButtonClicked = function(e) {
+		e.preventDefault();
+		composeTweet();
+	};
+
+	var onTweetButtonClicked = function(e) {
+		e.preventDefault();
+		tweetIt();
+	};
+
+	var composeTweet = function() {
 		setMemeText();
 		setMemeImage();
-		composeMemeText();
 	};
 
 	var setMemeText = function() {
@@ -510,8 +533,7 @@ var App = (function() {
 		memeImageElem.setAttribute('src', MEME_IMAGE_PATH);
 	};
 
-	var composeMemeText = function() {
-		console.log('we composing');
+	var tweetIt = function() {
 		socket.emit('tweet button clicked', {
 			image_path: MEME_IMAGE_PATH,
 			meme_text: MEME_TEXT

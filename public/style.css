@@ -69,3 +69,22 @@ body {
 	width: 100%;
 	max-width: 540px;
 }
+.buttons-container {
+	margin: 1em auto;
+	text-align: center;
+}
+.button {
+	line-height: 1;
+	font-size: 24px;
+	padding: 10px;
+	border: 1px solid #333;
+	color: #333;
+	text-decoration: none;
+	display: inline-block;
+	transition: all 0.33s ease;
+	margin: 0.4em;
+}
+.button:hover {
+	background-color: #333;
+	color: white;
+}
