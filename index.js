@@ -13,7 +13,9 @@ var TwitterFantasyBot = (function() {
 		consumerSecret,
 		accessToken,
 		accessTokenSecret,
-		tweetSentence = '';
+		tweetSentence = '',
+		storedUsername = null,
+		myUsername = 'soylentmemes';
 
 	var setupPorts = function() {
 		app.set('port', (process.env.PORT || 5000));
@@ -79,6 +81,21 @@ var TwitterFantasyBot = (function() {
 		})
 	};
 
+	searchTweets = function(tweetData) {
+		Tweet.get('search/tweets', { q: 'soylent', count: 1 }, function(err, data, response) {
+			var status = data.statuses[0];
+			console.log(status.user.screen_name, status.text, tweetData);
+			if (status.user.screen_name !== storedUsername && status.user.screen_name !== myUsername) {
+				tweetData.meme_text = '.@' + status.user.screen_name + ' ' + tweetData.meme_text;
+				storedUsername = status.user.screen_name;
+				postTweet(tweetData);
+			}
+			else {
+				console.log('already tweeted at this user');
+			}
+		});
+	};
+
 	var onIO = function() {
 		io.on('connection', function(socket) {
 			socket.on('tweet button clicked', function(data) {
@@ -91,6 +108,14 @@ var TwitterFantasyBot = (function() {
 				io.emit('new tweet', {
 					tweet: tweetSentence
 				});
+			});
+			socket.on('check latest tweets', function(tweetData) {
+				try {
+					searchTweets(tweetData);
+				}
+				catch(e) {
+					console.log(e);
+				}
 			});
 		});
 	};

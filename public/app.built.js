@@ -486,6 +486,7 @@ var App = (function() {
 		memeImageElem,
 		generateButton,
 		tweetButton,
+		tweetAtButton,
 		MEME_IMAGE_PATH,
 		MEME_TEXT,
 		MEME_TEXT_COMPOSED;
@@ -493,6 +494,7 @@ var App = (function() {
 	var initialize = function() {
 		generateButton = document.getElementById('generate-button');
 		tweetButton = document.getElementById('tweet-button');
+		tweetAtButton = document.getElementById('tweet-at-button');
 		memeTextElem = document.getElementById('meme-text');
 		memeImageElem = document.getElementById('meme-image');
 		memesTextArray = Soylent.faq;
@@ -504,6 +506,7 @@ var App = (function() {
 	var addListeners = function() {
 		generateButton.addEventListener('click', onGenerateButtonClicked);
 		tweetButton.addEventListener('click', onTweetButtonClicked);
+		tweetAtButton.addEventListener('click', onTweetAtButtonClicked);
 	};
 
 	var onGenerateButtonClicked = function(e) {
@@ -514,6 +517,11 @@ var App = (function() {
 	var onTweetButtonClicked = function(e) {
 		e.preventDefault();
 		tweetIt();
+	};
+
+	var onTweetAtButtonClicked = function(e) {
+		e.preventDefault();
+		checkLatestTweets();
 	};
 
 	var composeTweet = function() {
@@ -535,6 +543,13 @@ var App = (function() {
 
 	var tweetIt = function() {
 		socket.emit('tweet button clicked', {
+			image_path: MEME_IMAGE_PATH,
+			meme_text: MEME_TEXT
+		});
+	};
+
+	var checkLatestTweets = function() {
+		socket.emit('check latest tweets', {
 			image_path: MEME_IMAGE_PATH,
 			meme_text: MEME_TEXT
 		});
