@@ -18,6 +18,8 @@ var App = (function() {
 		memesTextArrayLen,
 		memeTextElem,
 		memeImageElem,
+		waitingScreen,
+		notificationScreen,
 		generateButton,
 		tweetButton,
 		tweetAtButton,
@@ -31,6 +33,8 @@ var App = (function() {
 		tweetAtButton = document.getElementById('tweet-at-button');
 		memeTextElem = document.getElementById('meme-text');
 		memeImageElem = document.getElementById('meme-image');
+		waitingScreen = document.getElementById('waiting-screen');
+		notificationScreen = document.getElementById('notification-screen');
 		memesTextArray = Soylent.faq;
 		memesTextArrayLen = memesTextArray.length;
 		composeTweet();
@@ -41,6 +45,24 @@ var App = (function() {
 		generateButton.addEventListener('click', onGenerateButtonClicked);
 		tweetButton.addEventListener('click', onTweetButtonClicked);
 		tweetAtButton.addEventListener('click', onTweetAtButtonClicked);
+		socket.on('new tweet', onNewTweet);
+		socket.on('already tweeted at this user', onAlreadyTweetedAtUser);
+	};
+
+	var onNewTweet = function(e) {
+		var postedTweet = e.tweet;
+		if (postedTweet.errors) {
+			// The tweet had errors
+			stopWaiting(false, postedTweet.errors[0].message);
+		}
+		else {
+			// The tweet was successful
+			stopWaiting(true, 'You just tweeted that dank meme.');
+		}
+	};
+
+	var onAlreadyTweetedAtUser = function() {
+		stopWaiting(false, 'You have already tweeted at this user');
 	};
 
 	var onGenerateButtonClicked = function(e) {
@@ -80,6 +102,7 @@ var App = (function() {
 			image_path: MEME_IMAGE_PATH,
 			meme_text: MEME_TEXT
 		});
+		runWaiting();
 	};
 
 	var checkLatestTweets = function() {
@@ -87,6 +110,21 @@ var App = (function() {
 			image_path: MEME_IMAGE_PATH,
 			meme_text: MEME_TEXT
 		});
+		runWaiting();
+	};
+
+	var runWaiting = function() {
+		waitingScreen.style.visibility = 'visible';
+	};
+
+	var stopWaiting = function(didPublish, text) {
+		var p = notificationScreen.querySelector('p');
+		p.innerText = text;
+		waitingScreen.style.visibility = 'hidden';
+		notificationScreen.style.visibility = 'visible';
+		setTimeout(function() {
+			notificationScreen.style.visibility = 'hidden';
+		}, 3000);
 	};
 
 	return {

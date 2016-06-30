@@ -67,7 +67,10 @@ var TwitterFantasyBot = (function() {
 						// now we can reference the media and post a tweet (media will attach to the tweet)
 						var params = { status: STORED_DATA.meme_text, media_ids: [mediaIdStr] }
 						Tweet.post('statuses/update', params, function (err, data, response) {
-							console.log(data)
+							console.log(data);
+							io.emit('new tweet', {
+								tweet: data
+							});
 						});
 					}
 					else {
@@ -84,13 +87,13 @@ var TwitterFantasyBot = (function() {
 	searchTweets = function(tweetData) {
 		Tweet.get('search/tweets', { q: 'soylent', count: 1 }, function(err, data, response) {
 			var status = data.statuses[0];
-			if (status.user && status.user.screen_name !== storedUsername && status.user.screen_name !== myUsername) {
+			if (status && status.user && status.user.screen_name !== storedUsername && status.user.screen_name !== myUsername) {
 				tweetData.meme_text = '.@' + status.user.screen_name + ' ' + tweetData.meme_text;
 				storedUsername = status.user.screen_name;
 				postTweet(tweetData);
 			}
 			else {
-				console.log('already tweeted at this user');
+				io.emit('already tweeted at this user');
 			}
 		});
 	};
@@ -104,9 +107,6 @@ var TwitterFantasyBot = (function() {
 				catch (e) {
 					console.log(e);
 				}
-				io.emit('new tweet', {
-					tweet: tweetSentence
-				});
 			});
 			socket.on('check latest tweets', function(tweetData) {
 				try {
