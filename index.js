@@ -84,8 +84,7 @@ var TwitterFantasyBot = (function() {
 	searchTweets = function(tweetData) {
 		Tweet.get('search/tweets', { q: 'soylent', count: 1 }, function(err, data, response) {
 			var status = data.statuses[0];
-			console.log(status.user.screen_name, status.text, tweetData);
-			if (status.user.screen_name !== storedUsername && status.user.screen_name !== myUsername) {
+			if (status.user && status.user.screen_name !== storedUsername && status.user.screen_name !== myUsername) {
 				tweetData.meme_text = '.@' + status.user.screen_name + ' ' + tweetData.meme_text;
 				storedUsername = status.user.screen_name;
 				postTweet(tweetData);
