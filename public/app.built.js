@@ -489,6 +489,7 @@ var App = (function() {
 		generateButton,
 		tweetButton,
 		tweetAtButton,
+		tweetAtSoylentButton,
 		MEME_IMAGE_PATH,
 		MEME_TEXT,
 		MEME_TEXT_COMPOSED;
@@ -497,6 +498,7 @@ var App = (function() {
 		generateButton = document.getElementById('generate-button');
 		tweetButton = document.getElementById('tweet-button');
 		tweetAtButton = document.getElementById('tweet-at-button');
+		tweetAtSoylentButton = document.getElementById('tweet-at-soylent-button');
 		memeTextElem = document.getElementById('meme-text');
 		memeImageElem = document.getElementById('meme-image');
 		waitingScreen = document.getElementById('waiting-screen');
@@ -511,6 +513,7 @@ var App = (function() {
 		generateButton.addEventListener('click', onGenerateButtonClicked);
 		tweetButton.addEventListener('click', onTweetButtonClicked);
 		tweetAtButton.addEventListener('click', onTweetAtButtonClicked);
+		tweetAtSoylentButton.addEventListener('click', onTweetAtSoylentButtonClicked);
 		socket.on('new tweet', onNewTweet);
 		socket.on('already tweeted at this user', onAlreadyTweetedAtUser);
 	};
@@ -544,6 +547,12 @@ var App = (function() {
 	var onTweetAtButtonClicked = function(e) {
 		e.preventDefault();
 		checkLatestTweets();
+	};
+
+	var onTweetAtSoylentButtonClicked = function(e) {
+		e.preventDefault();
+		MEME_TEXT = '.@soylent ' + MEME_TEXT;
+		tweetIt();
 	};
 
 	var composeTweet = function() {
