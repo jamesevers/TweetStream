@@ -1,27 +1,16 @@
-# Soylent Singularity
+# TweetStream
 
-### Getting started
+### Getting up and running:
 
-You gotta install everything, so
-
-```
-npm install
-```
-
-then you want to build the stuff, so:
 
 ```
-grunt
+1. npm install
 ```
 
-or, if you want to get fancy,
-
 ```
-grunt watch
+2. grunt watch
 ```
 
-Finally, to get this running locally, you'll need to do:
-
 ```
-npm run start
+3. npm run start
 ```
