@@ -1,119 +1,376 @@
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+* {
+  margin: 0;
 }
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
+html, body {
+  height: 100%;
+  background: white;
 }
 
-/************************
-*
-* STYlES FOR THE PAGE
-*
-*************************/
-body {
-	font-family: helvetica, sans-serif;
+
+
+#body-block{
+  background: white;
 }
-.section-body {
-	width: 90%;
-	max-width: 540px;
-	margin: 2em auto;
+
+ul {
+  list-style: none;
+  margin:0;
+  padding:0;
 }
-.meme-text {
-	font-size: 32px;
-	margin-bottom: 1em;
-	line-height: 1.4;
+
+ul > li {
+  padding-right:30px;
 }
-.meme-image {
-	width: 100%;
-	max-width: 540px;
+
+.header{
 }
-.buttons-container {
-	margin: 1em auto;
-	text-align: center;
+
+.title-group{
+  margin-bottom: 0px;
+  border: solid 1px #1D2951;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background: white;
 }
-.button {
-	line-height: 1;
-	font-size: 24px;
-	padding: 10px;
-	border: 1px solid #333;
-	color: #333;
-	text-decoration: none;
-	display: inline-block;
-	transition: all 0.33s ease;
-	margin: 0.4em;
+#telescope{
+  margin-right: 10%;
+  cursor: pointer;
 }
-.button:hover {
-	background-color: #333;
-	color: white;
+
+#telescope:hover{
+
 }
-.overlay {
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	background-color: rgba(0, 0, 0, 0.8);
-	color: white;
-	visibility: hidden;
+
+button {
+  background: white;
+  border: none;
+  margin-right: 10%;
 }
-.overlay-inner {
-	width: 90%;
-	max-width: 440px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	text-align: center;
+
+.page-wrap:after {
+  content: "";
+  display: block;
 }
-.overlay-inner h1 {
-	font-size: 48px;
-	margin-bottom: 1em;
-	font-weight: 800;
+.site-footer, .page-wrap:after {
+  height: 50px;
 }
-.overlay-inner p {
-	font-size: 24px;
-	line-height: 1.4;
-	font-weight: 100;
+.site-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background: white;
+}
+
+.inner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;;
+  background: rgb(56, 80, 160);
+}
+
+
+
+svg {
+  display: block;
+  margin: auto;
+  width: 100%;
+  margin-right: 0px;
+  padding: 0px;
+  overflow: visible;
+  background: #1D2951;
+}
+
+.fa {
+  color: white;
+  padding: 25px;
+  margin-top: 30px;
+  transition: box-shadow .5s ease;
+  font-size: 32px;
+}
+
+.fa-github:before {
+  font-size: 32px;
+}
+
+.fa-linkedin:before{
+  font-size: 32px;
+}
+
+.fa-hand-o-up:before{
+  font-size: 24px;
+}
+
+.fa:hover {
+  color: #0084B4;
+  box-shadow: 2px 2px 5px 3px #0084B4;
+}
+.title {
+  font-family: 'Ubuntu', sans-serif;
+  color: #0084B4;
+  padding: 10px;
+  font-size: 32px;
+  font-weight: 800;
+  padding-left: 75px;
+}
+
+.sub-title {
+  font-family: 'Ubuntu', sans-serif;
+  color: #0084B4;
+  padding: 5px;
+  font-size: 24px;
+  font-weight: 700;
+  padding-left: 75px;
+}
+
+.icons{
+  display:flex;
+  flex-direction: row;
+}
+
+
+
+/*modal*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.article {
+  background: blue;
+}
+
+.modal-content {
+    background-color: white;
+    color: #0084B4;
+    font-family: 'Ubuntu', sans-serif;
+    margin: 10% auto;
+    padding: 20px;
+    border: 2px solid white;
+    border-radius: 5px;
+    width: 75%;
+    font-size: 18px;
+    height: 60%;
+    text-align: justify;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.border {
+  stroke: yellow;
+}
+
+.tweet-initial {
+  stroke: white;
+  stroke-width: 1;
+  opacity: .2;
+  fill: yellow;
+	z-index: 1;
+}
+
+.tweet {
+  stroke: white;
+  stroke-width: 4;
+  opacity: .2;
+  fill: yellow;
+	z-index: 1;
+}
+
+.tweets-info {
+
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 7%;
+    width: 20%;
+    height: 10%;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: #354da0;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    display: inline-block;
+    overflow: hidden;
+  }
+
+
+.range-label{
+  color: white;
+  padding-top: 20px;
+}
+
+.body-group {
+  display: flex;
+  flex-direction: row;
+  background: white;
+}
+
+.tweets-sidebar{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  background: rgb(56, 80, 160);
+}
+
+.details-container{
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  font-family: 'Ubuntu', sans-serif;
+  color: white;
+}
+
+.details-container li {
+  color: white;
+}
+
+#time-display {
+  padding: 10px;
+}
+
+#tweet-total{
+  color: white;
+  display: flex;
+  justify-content: center;
+  font-family: 'Ubuntu', sans-serif;
+  padding: 5px;
+}
+
+
+#count-display {
+  padding: 0px;
+  margin-left: 0px;
+  font-size: 24px;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+#trending-title{
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  padding: 5px;
+}
+
+.hashtags{
+  padding-left:0px;
+}
+
+.hashtags-list{
+  padding: 15px;
+}
+
+#word-counts {
+  color: #0084B4;
+}
+
+
+#range {
+  display:block;
+  width: 80%;
+  padding: 0px;
+  margin-left: 20px;
+}
+
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 50px 0;
+  background: #0084B4;
+  box-shadow: -4px -4px 5px 5px #0084B4;
+  transition: box-shadow .5s ease;
+}
+input[type=range]:focus {
+  outline: none;
+  box-shadow: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 200px;
+  height: 8.4px;
+  cursor: pointer;
+  background: #0084B4;
+  transition: box-shadow .5s ease;
+  border-radius: 3px;
+  border: 0px;
+}
+input[type=range]::-webkit-slider-thumb {
+  border: 1px solid #0084B4;
+  height: 16px;
+  width: 16px;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+  background-image: url('https://www.welovesolo.com/wp-content/uploads/vecteezy/11/dg1p1qnkbbl.jpg')
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+    width: 50%;
+    background: #ffffff;
+    box-shadow: 4px 4px 5px 5px #ffffff;
+}
+
+
+/// search bar styles
+
+.container-4{
+  overflow: hidden;
+  width: 150px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.container-4 input#search{
+  width: 210px;
+  height: 50px;
+  background: white;
+  border: none;
+  font-size: 10pt;
+  color: #0084B4;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: bolder;
+  padding-left: 15px;
+  margin-left: 5%;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.container-4 input#search::-webkit-input-placeholder {
+   color: #65737e;
+}
+
+.container-4 input#search:-moz-placeholder { /* Firefox 18- */
+   color: #65737e;
+}
+
+.container-4 input#search::-moz-placeholder {  /* Firefox 19+ */
+   color: #65737e;
+}
+
+.container-4 input#search:-ms-input-placeholder {
+   color: #65737e;
 }

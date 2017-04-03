@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var Twit = require('twit');
+var Twitter = require('twitter');
 var fs = require('node-fs');
 
 var TwitterFantasyBot = (function() {
@@ -13,9 +13,7 @@ var TwitterFantasyBot = (function() {
 		consumerSecret,
 		accessToken,
 		accessTokenSecret,
-		tweetSentence = '',
-		storedUsername = null,
-		myUsername = 'soylentmemes';
+		tweets = []
 
 	var setupPorts = function() {
 		app.set('port', (process.env.PORT || 5000));
@@ -26,22 +24,22 @@ var TwitterFantasyBot = (function() {
 		var jsonFile = jetpack.read('twitter-credentials.json', 'json');
 		consumerKey = jsonFile["consumer_key"];
 		consumerSecret = jsonFile["consumer_secret"];
-		accessToken = jsonFile["access_token"];
+		accessToken = jsonFile["access_token_key"];
 		accessTokenSecret = jsonFile["access_token_secret"];
 	};
 
 	var createTwitterConnection = function() {
-		Tweet = new Twit({
+		client = new Twitter({
 			consumer_key: consumerKey,
 			consumer_secret: consumerSecret,
-			access_token: accessToken,
+			access_token_key: accessToken,
 			access_token_secret: accessTokenSecret
 		});
 	};
 
 	var listenToPort = function() {
 		http.listen(app.get('port'), function() {
-			console.log("Node app is running at localhost:" + app.get('port'));
+			console.log("Node app is fuckin runnin at localhost:" + app.get('port'));
 		});
 	};
 
@@ -50,6 +48,26 @@ var TwitterFantasyBot = (function() {
 			res.sendfile('public/index.html');
 		});
 	};
+
+	var streamTweets = function() {
+		var tweets = [];
+
+		client.stream('statuses/sample',  function(stream) {
+			stream.on('data', function(tweet) {
+				if (tweet.coordinates || tweet.place){
+					if (tweet.place.country_code === 'US'){
+						console.log(tweet.text);
+						io.emit('incoming tweet', {
+							tweet: tweet
+						});
+					}
+				}
+			});
+			stream.on('error', function(error) {
+				console.log(error);
+			});
+		});
+	}
 
 	var postTweet = function(data) {
 		var STORED_DATA = data;
@@ -67,7 +85,6 @@ var TwitterFantasyBot = (function() {
 						// now we can reference the media and post a tweet (media will attach to the tweet)
 						var params = { status: STORED_DATA.meme_text, media_ids: [mediaIdStr] }
 						Tweet.post('statuses/update', params, function (err, data, response) {
-							console.log(data);
 							io.emit('new tweet', {
 								tweet: data
 							});
@@ -99,20 +116,13 @@ var TwitterFantasyBot = (function() {
 	};
 
 	var onIO = function() {
+		console.log('socket io');
 		io.on('connection', function(socket) {
-			socket.on('tweet button clicked', function(data) {
+			socket.on('start streaming', function(data) {
 				try {
-					postTweet(data);
+					streamTweets();
 				}
 				catch (e) {
-					console.log(e);
-				}
-			});
-			socket.on('check latest tweets', function(tweetData) {
-				try {
-					searchTweets(tweetData);
-				}
-				catch(e) {
 					console.log(e);
 				}
 			});

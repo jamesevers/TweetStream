@@ -2,125 +2,92 @@
 
 // Requires and needs
 var socket = io();
-var Soylent = require('./../soylent-faq');
 var TwitterCredentials = require('./../twitter-credentials.json');
 var fs = require('node-fs');
+var d3 = require('d3');
+var topojson = require('topojson');
 
 // The mo' f'in hearbeat
 socket.heartbeatTimeout = 20000;
 
 var App = (function() {
 
-	var ajax,
-		imgPath = 'public/stock_screaming/',
-		memesArrayLen = 42,
-		memesTextArray,
-		memesTextArrayLen,
-		memeTextElem,
-		memeImageElem,
-		waitingScreen,
-		notificationScreen,
-		generateButton,
-		tweetButton,
-		tweetAtButton,
-		tweetAtSoylentButton,
-		MEME_IMAGE_PATH,
-		MEME_TEXT,
-		MEME_TEXT_COMPOSED;
+	var tweets = [];
 
 	var initialize = function() {
 		generateButton = document.getElementById('generate-button');
-		tweetButton = document.getElementById('tweet-button');
-		tweetAtButton = document.getElementById('tweet-at-button');
-		tweetAtSoylentButton = document.getElementById('tweet-at-soylent-button');
-		memeTextElem = document.getElementById('meme-text');
-		memeImageElem = document.getElementById('meme-image');
-		waitingScreen = document.getElementById('waiting-screen');
-		notificationScreen = document.getElementById('notification-screen');
-		memesTextArray = Soylent.faq;
-		memesTextArrayLen = memesTextArray.length;
-		composeTweet();
-		addListeners();
+
+		drawMap();
+		runStream();
 	};
 
-	var addListeners = function() {
-		generateButton.addEventListener('click', onGenerateButtonClicked);
-		tweetButton.addEventListener('click', onTweetButtonClicked);
-		tweetAtButton.addEventListener('click', onTweetAtButtonClicked);
-		tweetAtSoylentButton.addEventListener('click', onTweetAtSoylentButtonClicked);
-		socket.on('new tweet', onNewTweet);
-		socket.on('already tweeted at this user', onAlreadyTweetedAtUser);
+	var runStream = function() {
+		socket.emit('start streaming')
+		socket.on('incoming tweet', placeCoords);
 	};
 
-	var onNewTweet = function(e) {
-		var postedTweet = e.tweet;
-		if (postedTweet.errors) {
-			// The tweet had errors
-			stopWaiting(false, postedTweet.errors[0].message);
-		}
-		else {
-			// The tweet was successful
-			stopWaiting(true, 'You just tweeted that dank meme.');
-		}
-	};
+	var placeCoords = function(e) {
 
-	var onAlreadyTweetedAtUser = function() {
-		stopWaiting(false, 'You have already tweeted at this user');
-	};
+		var tweet = e.tweet;
+		tweets.push(tweet);
 
-	var onGenerateButtonClicked = function(e) {
-		e.preventDefault();
-		composeTweet();
-	};
+		//add conditional to destroy old tweets
 
-	var onTweetButtonClicked = function(e) {
-		e.preventDefault();
-		tweetIt();
-	};
+    var svg = d3.select("svg");
+    var projection = d3.geoAlbersUsa();
+    projection.scale([1300])
 
-	var onTweetAtButtonClicked = function(e) {
-		e.preventDefault();
-		checkLatestTweets();
-	};
+    const div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0)
 
-	var onTweetAtSoylentButtonClicked = function(e) {
-		e.preventDefault();
-		MEME_TEXT = '.@soylent ' + MEME_TEXT;
-		tweetIt();
-	};
+		svg.append("circle")
+			.data([tweet])
+			.attr('cx', function(tweet) {
+				var coord = tweet.place.bounding_box.coordinates[0][0];
+				return projection(coord)[0] - 5;
+			})
+			.attr('cy', function(tweet) {
+				var coord = tweet.place.bounding_box.coordinates[0][0];
+				return projection(coord)[1] - 5;
+			})
 
-	var composeTweet = function() {
-		setMemeText();
-		setMemeImage();
-	};
+      .attr("r", "1px")
+      .attr("class", "tweet-initial")
+      .style("opacity", .8)
+      .on("mouseover", (d) => {
+        div.transition()
+          .duration(200)
+          .style("opacity", .9)
+          .style("fill", "yellow");
+        div	.html(d.text)
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY - 28) + "px")
+          .style("background", "white")
+          .style("color", "#1D2951");
+      })
+      .on("mouseout", function(d) {
+        div.transition()
+        .duration(500)
+        .style("opacity", 0);
+      })
+			.transition()
+				.duration(500)
+				.style("fill", "orange")
+				.attr("r", "6px")
+			.transition()
+				.duration(500)
+				.style("fill", "yellow")
+				.attr("r", "3px");
 
-	var setMemeText = function() {
-		var randomInt = Math.floor(Math.random() * memesTextArrayLen);
-		MEME_TEXT = memesTextArray[randomInt];
-		memeTextElem.innerText = MEME_TEXT;
-	};
+  }
 
-	var setMemeImage = function() {
-		var randomInt = Math.floor(Math.random() * memesArrayLen);
-		MEME_IMAGE_PATH = imgPath + randomInt + '.jpg';
-		memeImageElem.setAttribute('src', MEME_IMAGE_PATH);
-	};
+  var clearCoords = function(){
+    const svg = d3.select("svg");
+    svg.selectAll("circle")
+    .remove()
+  }
 
-	var tweetIt = function() {
-		socket.emit('tweet button clicked', {
-			image_path: MEME_IMAGE_PATH,
-			meme_text: MEME_TEXT
-		});
-		runWaiting();
-	};
-
-	var checkLatestTweets = function() {
-		socket.emit('check latest tweets', {
-			image_path: MEME_IMAGE_PATH,
-			meme_text: MEME_TEXT
-		});
-		runWaiting();
-	};
 
 	var runWaiting = function() {
 		waitingScreen.style.visibility = 'visible';
@@ -136,9 +103,33 @@ var App = (function() {
 		}, 3000);
 	};
 
+	var drawMap = function(){
+		console.log('draw map?');
+		var svg = d3.select("svg");
+
+		var path = d3.geoPath();
+
+		d3.json("https://d3js.org/us-10m.v1.json", function(error, us) {
+			if (error) throw error;
+
+			svg.append("g")
+				.attr("class", "states")
+				.selectAll("path")
+				.data(topojson.feature(us, us.objects.states).features)
+				.enter().append("path")
+					.attr("d", path)
+					.attr("fill", "blue")
+					.attr("opacity", .8)
+
+			svg.append("path")
+					.attr("class", "border")
+					.attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })));
+		});
+	};
+
+
 	return {
 		init: function() {
-			console.log('we init');
 			initialize();
 		}
 	}
