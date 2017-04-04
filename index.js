@@ -50,13 +50,17 @@ var TwitterStream = (function() {
 	};
 
 	var streamTweets = function() {
-		var tweets = []; /// store tweets on back end?
+		var tweets = 0;
 
 		client.stream('statuses/sample',  function(stream) {
 			stream.on('data', function(tweet) {
-				if (tweet.coordinates || tweet.place){
+				if (tweet.place){
 					if (tweet.place.country_code === 'US'){
 						console.log(tweet.text);
+						tweets += 1
+						if (tweets > 200){
+							io.emit('clear coordinates')
+						}
 						io.emit('incoming tweet', {
 							tweet: tweet
 						});

@@ -22,17 +22,13 @@ var App = (function() {
 	var runStream = function() {
 		socket.emit('start streaming')
 		socket.on('incoming tweet', placeCoords);
+		socket.on('clear coordinates', clearCoords)
 	};
 
 	var placeCoords = function(e) {
 
 		var tweet = e.tweet;
 		tweets.push(tweet);
-
-		if (tweets.length > 100){
-			clearCoords();
-
-		}
 
     var svg = d3.select("svg");
     var projection = d3.geoAlbersUsa();
@@ -50,7 +46,6 @@ var App = (function() {
 			})
 			.attr('cy', function(tweet) {
 				var coord = tweet.place.bounding_box.coordinates[0][0];
-				console.log(coord);
 				return projection(coord)[1] + 55;
 			})
 
@@ -84,7 +79,7 @@ var App = (function() {
 
   }
 
-  var clearCoords = function(){
+	var clearCoords = function(){
     const svg = d3.select("svg");
     svg.selectAll("circle")
     .remove();
