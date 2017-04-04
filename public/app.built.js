@@ -19014,35 +19014,15 @@ socket.heartbeatTimeout = 20000;
 
 var App = (function() {
 
-	var ajax,
-		imgPath = 'public/stock_screaming/',
-		memesArrayLen = 42,
-		memesTextArray,
-		memesTextArrayLen,
-		memeTextElem,
-		memeImageElem,
-		waitingScreen,
-		tweets = [],
-		notificationScreen,
-		generateButton,
-		tweetButton,
-		tweetAtButton,
-		tweetAtSoylentButton,
-		MEME_IMAGE_PATH,
-		MEME_TEXT,
-		MEME_TEXT_COMPOSED;
+	var tweets = [];
 
 	var initialize = function() {
-		generateButton = document.getElementById('generate-button');
-
 		drawMap();
-		socket.emit('start streaming')
-		addListeners();
+		runStream();
 	};
 
-	var addListeners = function() {
-
-		console.log('add socket listeners');
+	var runStream = function() {
+		socket.emit('start streaming')
 		socket.on('incoming tweet', placeCoords);
 	};
 
@@ -19050,7 +19030,11 @@ var App = (function() {
 
 		var tweet = e.tweet;
 		tweets.push(tweet);
-		console.log(tweets);
+
+		if (tweets.length > 100){
+			clearCoords();
+
+		}
 
     var svg = d3.select("svg");
     var projection = d3.geoAlbersUsa();
@@ -19068,7 +19052,8 @@ var App = (function() {
 			})
 			.attr('cy', function(tweet) {
 				var coord = tweet.place.bounding_box.coordinates[0][0];
-				return projection(coord)[1] - 5;
+				console.log(coord);
+				return projection(coord)[1] + 55;
 			})
 
       .attr("r", "1px")
@@ -19104,18 +19089,9 @@ var App = (function() {
   var clearCoords = function(){
     const svg = d3.select("svg");
     svg.selectAll("circle")
-    .remove()
+    .remove();
+		tweets = [];
   }
-
-	var onGenerateButtonClicked = function(e) {
-		e.preventDefault();
-		composeTweet();
-	};
-
-	var onTweetButtonClicked = function(e) {
-		e.preventDefault();
-		tweetIt();
-	};
 
 
 	var runWaiting = function() {
@@ -19156,6 +19132,7 @@ var App = (function() {
 		});
 	};
 
+
 	return {
 		init: function() {
 			initialize();
@@ -19168,10 +19145,10 @@ App.init();
 
 },{"./../twitter-credentials.json":8,"d3":2,"node-fs":3,"topojson":6}],8:[function(require,module,exports){
 module.exports={
-  "consumer_key": "HoZCeOnIan4WNuOlOhcMMJ7jv",
-  "consumer_secret": "B28dNjHrXHDgnGLMoUhLybTodL1tMBdweDpAERpoSSJ2o2zA3u",
-  "access_token_key": "836432860890468354-IYyB8pC7REPke29Pfp4Pu6kdtvw9yfS",
-  "access_token_secret": "PPqYyRACyi0RZgEw7PbJ3RSNmOK5BPvVwcMw2EkEpi5qe"
+	"access_token_key": "836432860890468354-tPluyK4PLxnWkCosLrkURvSPM5amL1L",
+	"access_token_secret": "3XlCPZrq1OlqJCwYM0HLIHLMNeK2G4pt7pBF90CUWiY3k",
+	"consumer_key": "ZY8hGC1L3GFZQCr37FojnUQMs",
+	"consumer_secret": "NTqgbXWU1FvtNq8dZtkALDcBaLFdc1l3mnqRF5T13mQ23griCC"
 }
 
 },{}]},{},[7]);

@@ -6,7 +6,7 @@ var io = require('socket.io')(http);
 var Twitter = require('twitter');
 var fs = require('node-fs');
 
-var TwitterFantasyBot = (function() {
+var TwitterStream = (function() {
 
 	var Tweet,
 		consumerKey,
@@ -39,7 +39,7 @@ var TwitterFantasyBot = (function() {
 
 	var listenToPort = function() {
 		http.listen(app.get('port'), function() {
-			console.log("Node app is fuckin runnin at localhost:" + app.get('port'));
+			console.log("Node app is a'runnin at localhost:" + app.get('port'));
 		});
 	};
 
@@ -50,7 +50,7 @@ var TwitterFantasyBot = (function() {
 	};
 
 	var streamTweets = function() {
-		var tweets = [];
+		var tweets = []; /// store tweets on back end?
 
 		client.stream('statuses/sample',  function(stream) {
 			stream.on('data', function(tweet) {
@@ -69,51 +69,6 @@ var TwitterFantasyBot = (function() {
 		});
 	}
 
-	var postTweet = function(data) {
-		var STORED_DATA = data;
-		var b64content = fs.readFileSync(STORED_DATA.image_path, { encoding: 'base64' });
-		Tweet.post('media/upload', { media_data: b64content }, function (err, data, response) {
-			if (!err) {
-				// now we can assign alt text to the media, for use by screen readers and
-				// other text-based presentations and interpreters
-				var mediaIdStr = data.media_id_string
-				var altText = "Alt Text Hello World"
-				var meta_params = { status: STORED_DATA.meme_text, media_id: mediaIdStr, alt_text: { text: altText } }
-
-				Tweet.post('media/metadata/create', meta_params, function (err, data, response) {
-					if (!err) {
-						// now we can reference the media and post a tweet (media will attach to the tweet)
-						var params = { status: STORED_DATA.meme_text, media_ids: [mediaIdStr] }
-						Tweet.post('statuses/update', params, function (err, data, response) {
-							io.emit('new tweet', {
-								tweet: data
-							});
-						});
-					}
-					else {
-						console.log('fail at second media/metadata/create', err);
-					}
-				});
-			}
-			else {
-				console.log('fail at first media/upload', err);
-			}
-		})
-	};
-
-	searchTweets = function(tweetData) {
-		Tweet.get('search/tweets', { q: 'soylent', count: 1 }, function(err, data, response) {
-			var status = data.statuses[0];
-			if (status && status.user && status.user.screen_name !== storedUsername && status.user.screen_name !== myUsername) {
-				tweetData.meme_text = '.@' + status.user.screen_name + ' ' + tweetData.meme_text;
-				storedUsername = status.user.screen_name;
-				postTweet(tweetData);
-			}
-			else {
-				io.emit('already tweeted at this user');
-			}
-		});
-	};
 
 	var onIO = function() {
 		console.log('socket io');
@@ -142,4 +97,4 @@ var TwitterFantasyBot = (function() {
 
 }());
 
-TwitterFantasyBot.init();
+TwitterStream.init();

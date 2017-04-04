@@ -15,8 +15,6 @@ var App = (function() {
 	var tweets = [];
 
 	var initialize = function() {
-		generateButton = document.getElementById('generate-button');
-
 		drawMap();
 		runStream();
 	};
@@ -31,7 +29,10 @@ var App = (function() {
 		var tweet = e.tweet;
 		tweets.push(tweet);
 
-		//add conditional to destroy old tweets
+		if (tweets.length > 100){
+			clearCoords();
+
+		}
 
     var svg = d3.select("svg");
     var projection = d3.geoAlbersUsa();
@@ -49,7 +50,8 @@ var App = (function() {
 			})
 			.attr('cy', function(tweet) {
 				var coord = tweet.place.bounding_box.coordinates[0][0];
-				return projection(coord)[1] - 5;
+				console.log(coord);
+				return projection(coord)[1] + 55;
 			})
 
       .attr("r", "1px")
@@ -85,7 +87,8 @@ var App = (function() {
   var clearCoords = function(){
     const svg = d3.select("svg");
     svg.selectAll("circle")
-    .remove()
+    .remove();
+		tweets = [];
   }
 
 
