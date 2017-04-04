@@ -19009,21 +19009,24 @@ var fs = require('node-fs');
 var d3 = require('d3');
 var topojson = require('topojson');
 
-// The mo' f'in hearbeat
 socket.heartbeatTimeout = 20000;
 
 var App = (function() {
 
 	var tweets = [];
+	var searchField;
 
 	var initialize = function() {
 		drawMap();
 		runStream();
+		searchField = document.getElementById("search");
+		searchField.addEventListener('change', searchTweets)
 	};
 
 	var runStream = function() {
 		socket.emit('start streaming')
 		socket.on('incoming tweet', placeCoords);
+		socket.on('trending hashtags', topWordCounts)
 		socket.on('clear coordinates', clearCoords)
 	};
 
@@ -19126,6 +19129,39 @@ var App = (function() {
 					.attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })));
 		});
 	};
+
+	var topWordCounts = function(e){
+		var data = e.trending;
+
+		if (e.trending.length !== undefined){
+			var items = Object.keys(data).map(function(key) {
+			return [key, data[key]];
+		});
+		items.sort(function(first, second) {
+			return second[1] - first[1];
+		});
+		var objects = items.slice(0,5);
+		var tags = ""
+		objects.forEach((item) => {
+			tags += "<li>"+item[0].slice(1) + "</li>";
+		});
+
+		document.getElementById("word-counts").innerHTML="<ul class='hashtags'>" + tags + "</ul>";
+		}
+	};
+
+	var searchTweets = function(e){
+		debugger
+		e.preventDefault();
+		var searchTerm = e.currentTarget.value;
+		return tweets.filter(searchText(searchTerm));
+ 	};
+
+ 	var searchText = function(searchTerm) {
+		 	return (tweet) => {
+				 return tweet.includes(searchTerm);
+		 }
+ };
 
 
 	return {

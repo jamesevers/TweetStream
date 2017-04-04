@@ -232,7 +232,7 @@ div.tooltip {
 .tweets-sidebar{
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 40%;
   background: rgb(56, 80, 160);
 }
 

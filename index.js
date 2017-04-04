@@ -13,7 +13,8 @@ var TwitterStream = (function() {
 		consumerSecret,
 		accessToken,
 		accessTokenSecret,
-		tweets = []
+		tweets = [],
+		trending = {}
 
 	var setupPorts = function() {
 		app.set('port', (process.env.PORT || 5000));
@@ -49,20 +50,38 @@ var TwitterStream = (function() {
 		});
 	};
 
+	var parseTweet = function(text) {
+
+    var hashTags = text.match(/#[a-z]+/gi);
+    if (hashTags !== null){
+      hashTags.forEach( function(word) {
+        if (trending.hasOwnProperty(word)) {
+          trending[word] += 1;
+        } else {
+          trending[word] = 1;
+        }
+      });
+    }
+ 	};
+
+
 	var streamTweets = function() {
-		var tweets = 0;
 
 		client.stream('statuses/sample',  function(stream) {
 			stream.on('data', function(tweet) {
 				if (tweet.place){
 					if (tweet.place.country_code === 'US'){
-						console.log(tweet.text);
-						tweets += 1
-						if (tweets > 200){
+						var tweetText = tweet.text;
+						tweets.push(tweetText);
+						parseTweet(tweetText)
+						if (tweets.length > 200){
 							io.emit('clear coordinates')
 						}
 						io.emit('incoming tweet', {
-							tweet: tweet
+							tweet: tweet,
+						});
+						io.emit('trending hashtags', {
+							trending: trending,
 						});
 					}
 				}
@@ -71,7 +90,7 @@ var TwitterStream = (function() {
 				console.log(error);
 			});
 		});
-	}
+	};
 
 
 	var onIO = function() {
@@ -87,6 +106,7 @@ var TwitterStream = (function() {
 			});
 		});
 	};
+
 
 	return {
 		init: function() {
