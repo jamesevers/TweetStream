@@ -2,7 +2,6 @@
 
 // Requires and needs
 var socket = io();
-var fs = require('node-fs');
 var d3 = require('d3');
 var topojson = require('topojson');
 
