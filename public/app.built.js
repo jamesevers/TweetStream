@@ -19004,7 +19004,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 // Requires and needs
 var socket = io();
-var TwitterCredentials = require('./../twitter-credentials.json');
 var fs = require('node-fs');
 var d3 = require('d3');
 var topojson = require('topojson');
@@ -19177,12 +19176,4 @@ var App = (function() {
 
 App.init();
 
-},{"./../twitter-credentials.json":8,"d3":2,"node-fs":3,"topojson":6}],8:[function(require,module,exports){
-module.exports={
-	"access_token_key": "836432860890468354-tPluyK4PLxnWkCosLrkURvSPM5amL1L",
-	"access_token_secret": "3XlCPZrq1OlqJCwYM0HLIHLMNeK2G4pt7pBF90CUWiY3k",
-	"consumer_key": "ZY8hGC1L3GFZQCr37FojnUQMs",
-	"consumer_secret": "NTqgbXWU1FvtNq8dZtkALDcBaLFdc1l3mnqRF5T13mQ23griCC"
-}
-
-},{}]},{},[7]);
+},{"d3":2,"node-fs":3,"topojson":6}]},{},[7]);

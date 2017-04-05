@@ -2,7 +2,6 @@
 
 // Requires and needs
 var socket = io();
-var TwitterCredentials = require('./../twitter-credentials.json');
 var fs = require('node-fs');
 var d3 = require('d3');
 var topojson = require('topojson');
