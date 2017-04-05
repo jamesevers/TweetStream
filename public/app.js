@@ -25,7 +25,6 @@ var App = (function() {
 		socket.emit('start streaming')
 		socket.on('incoming tweet', placeCoords);
 		socket.on('trending hashtags', topWordCounts)
-		socket.on('clear coordinates', clearCoords)
 	};
 
 	var placeCoords = function(e) {
@@ -49,7 +48,7 @@ var App = (function() {
 			})
 			.attr('cy', function(tweet) {
 				var coord = tweet.place.bounding_box.coordinates[0][0];
-				return projection(coord)[1] + 55;
+				return projection(coord)[1] + 50;
 			})
 
       .attr("r", "1px")
@@ -130,18 +129,22 @@ var App = (function() {
 
 	var topWordCounts = function(e){
 		var data = e.trending;
+		var spamKeywords = ['job', 'jobs', 'hiring']
 
-		if (e.trending.length !== undefined){
+		if (Object.keys(data).length > 0 ){
 			var items = Object.keys(data).map(function(key) {
-			return [key, data[key]];
-		});
+				if (!spamKeywords.includes(key.slice(1).toLowerCase())){
+					return [key, data[key]];
+				}
+			});
 		items.sort(function(first, second) {
 			return second[1] - first[1];
 		});
-		var objects = items.slice(0,5);
+
+		var objects = items.slice(0,10);
 		var tags = ""
 		objects.forEach((item) => {
-			tags += "<li>"+item[0].slice(1) + "</li>";
+			tags += "<li>"+item[0] + " : " + item[1] + "</li>";
 		});
 
 		document.getElementById("word-counts").innerHTML="<ul class='hashtags'>" + tags + "</ul>";

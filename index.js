@@ -74,9 +74,6 @@ var TwitterStream = (function() {
 						var tweetText = tweet.text;
 						tweets.push(tweetText);
 						parseTweet(tweetText)
-						if (tweets.length > 200){
-							io.emit('clear coordinates')
-						}
 						io.emit('incoming tweet', {
 							tweet: tweet,
 						});
