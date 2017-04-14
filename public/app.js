@@ -116,7 +116,7 @@ var App = (function() {
 				.data(topojson.feature(us, us.objects.states).features)
 				.enter().append("path")
 					.attr("d", path)
-					.attr("fill", "blue")
+					.attr("fill", "rgb(56, 80, 160)")
 					.attr("opacity", .8)
 
 			svg.append("path")
