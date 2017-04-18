@@ -15,8 +15,8 @@ var App = (function() {
 	var initialize = function() {
 		drawMap();
 		runStream();
-		searchField = document.getElementById("search");
-		searchField.addEventListener('change', searchTweets)
+		// searchField = document.getElementById("search");
+		// searchField.addEventListener('change', searchTweets);
 	};
 
 	var runStream = function() {
@@ -52,7 +52,7 @@ var App = (function() {
       .attr("r", "1px")
       .attr("class", "tweet-initial")
       .style("opacity", .8)
-      .on("mouseover", (d) => {
+      .on("mouseover", function(d) {
         div.transition()
           .duration(200)
           .style("opacity", .9)
@@ -141,7 +141,7 @@ var App = (function() {
 
 		var objects = items.slice(0,10);
 		var tags = ""
-		objects.forEach((item) => {
+		objects.forEach(function(item) {
 			tags += "<li>"+item[0] + " : " + item[1] + "</li>";
 		});
 

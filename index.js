@@ -52,16 +52,16 @@ var TwitterStream = (function() {
 
 	var parseTweet = function(text) {
 
-    var hashTags = text.match(/#[a-z]+/gi);
-    if (hashTags !== null){
-      hashTags.forEach( function(word) {
-        if (trending.hasOwnProperty(word)) {
-          trending[word] += 1;
-        } else {
-          trending[word] = 1;
-        }
-      });
-    }
+		var hashTags = text.match(/#[a-z]+/gi);
+		if (hashTags !== null){
+			hashTags.forEach( function(word) {
+				if (trending.hasOwnProperty(word)) {
+					trending[word] += 1;
+				} else {
+					trending[word] = 1;
+				}
+			});
+		}
  	};
 
 
