@@ -15,8 +15,7 @@ var App = (function() {
 	var initialize = function() {
 		drawMap();
 		runStream();
-		// searchField = document.getElementById("search");
-		// searchField.addEventListener('change', searchTweets);
+
 	};
 
 	var runStream = function() {
@@ -150,7 +149,6 @@ var App = (function() {
 	};
 
 	var searchTweets = function(e){
-		debugger
 		e.preventDefault();
 		var searchTerm = e.currentTarget.value;
 		return tweets.filter(searchText(searchTerm));
